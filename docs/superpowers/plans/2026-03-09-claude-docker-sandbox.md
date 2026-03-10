@@ -4,7 +4,7 @@
 
 **Goal:** Create a reusable Docker sandbox that confines Claude Code to a single bind-mounted workspace directory, with a pre-built image and a simple launch script.
 
-**Architecture:** A `Dockerfile` builds a reusable Ubuntu 24.04 image with Node.js 20 and Claude Code CLI installed. A `run.sh` script checks for the image, builds it if missing, then launches an interactive bash container with a read-only root filesystem and only `$PWD` bind-mounted as `/workspace`.
+**Architecture:** A `Dockerfile` builds a reusable Ubuntu 24.04 image with Node.js 20 and Claude Code CLI installed. A `sandbox.sh` script checks for the image, builds it if missing, then launches an interactive bash container with a read-only root filesystem and only `$PWD` bind-mounted as `/workspace`.
 
 **Tech Stack:** Docker, Ubuntu 24.04, Node.js 20 (NodeSource), `@anthropic-ai/claude-code` (npm)
 
@@ -25,7 +25,7 @@ All files are created in the repo root: `/home/dmh2000/projects/sandbox/`
 .git
 .dockerignore
 Dockerfile
-run.sh
+sandbox.sh
 docs/
 prompts/
 CLAUDE.md
@@ -105,12 +105,12 @@ git commit -m "feat: add Dockerfile with Ubuntu 24.04, Node.js 20, and Claude Co
 
 ---
 
-### Task 3: Create `run.sh`
+### Task 3: Create `sandbox.sh`
 
 **Files:**
-- Create: `run.sh` (repo root)
+- Create: `sandbox.sh` (repo root)
 
-- [ ] **Step 1: Write `run.sh`**
+- [ ] **Step 1: Write `sandbox.sh`**
 
 ```bash
 #!/usr/bin/env bash
@@ -153,14 +153,14 @@ docker run --rm -it \
 - [ ] **Step 2: Make it executable**
 
 ```bash
-chmod +x run.sh
+chmod +x sandbox.sh
 ```
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add run.sh
-git commit -m "feat: add run.sh sandbox launch script with --rebuild flag"
+git add sandbox.sh
+git commit -m "feat: add sandbox.sh sandbox launch script with --rebuild flag"
 ```
 
 ---
@@ -174,7 +174,7 @@ These are manual verification steps to confirm the sandbox behaves correctly. Ru
 - [ ] **Step 1: Launch the sandbox**
 
 ```bash
-./run.sh
+./sandbox.sh
 ```
 Expected: bash shell prompt inside the container, working directory is `/workspace`.
 
@@ -243,7 +243,7 @@ docker ps -a | grep claude-sandbox || echo "no container left"
 - [ ] **Step 9: Verify `--rebuild` flag works**
 
 ```bash
-./run.sh --rebuild
+./sandbox.sh --rebuild
 ```
 Expected: image rebuild starts (you see `Building image 'claude-sandbox'...`), then drops into bash shell as normal. Exit with `exit`.
 
@@ -253,5 +253,5 @@ Expected: image rebuild starts (you see `Building image 'claude-sandbox'...`), t
 
 - `--tmpfs /tmp:exec` — the `exec` flag is needed because some Node.js internals execute files from `/tmp`
 - `/root` as tmpfs means Claude Code auth (`~/.claude`) is always ephemeral — users must authenticate each session
-- The script uses `SCRIPT_DIR` to locate the `Dockerfile` regardless of where the user runs `run.sh` from; `$PWD` (the current directory at invocation time) is always what gets mounted as `/workspace`
+- The script uses `SCRIPT_DIR` to locate the `Dockerfile` regardless of where the user runs `sandbox.sh` from; `$PWD` (the current directory at invocation time) is always what gets mounted as `/workspace`
 - If Claude Code authentication via browser is needed inside the container, the user may need to add `--network host` or expose a port — this is not included by default as it depends on auth method

@@ -18,7 +18,7 @@ A Docker-based sandbox that runs Claude Code in an isolated environment. The hos
 ```
 sandbox/
 ├── Dockerfile        # reusable image definition
-├── run.sh            # launch script
+├── sandbox.sh            # launch script
 └── .dockerignore     # excludes unnecessary files from build context
 ```
 
@@ -27,9 +27,9 @@ sandbox/
 - Base image: `ubuntu:24.04` (current LTS)
 - Installs: `curl`, `git`, `ca-certificates`, Node.js 20 LTS (via NodeSource), `@anthropic-ai/claude-code` (global npm install)
 - `WORKDIR /workspace`
-- No default `CMD` — shell provided at runtime by `run.sh`
+- No default `CMD` — shell provided at runtime by `sandbox.sh`
 
-## run.sh
+## sandbox.sh
 
 - Checks `docker images -q claude-sandbox`; builds image automatically if not found
 - Accepts optional `--rebuild` flag to force image rebuild
@@ -48,12 +48,12 @@ Docker run flags:
 
 ## .dockerignore
 
-Excludes `run.sh`, `Dockerfile`, `.git`, `prompts/`, and `docs/` from the build context.
+Excludes `sandbox.sh`, `Dockerfile`, `.git`, `prompts/`, and `docs/` from the build context.
 
 ## User Workflow
 
 1. `cd /path/to/project`
-2. `./path/to/run.sh` — builds image if needed, drops into bash shell at `/workspace`
+2. `./path/to/sandbox.sh` — builds image if needed, drops into bash shell at `/workspace`
 3. Run `claude` inside the container and authenticate (subscription or API key)
 4. Claude Code session runs; auth is lost when container exits
 5. Files edited by Claude are visible immediately in VS Code on the host
