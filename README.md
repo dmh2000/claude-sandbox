@@ -42,7 +42,7 @@ The script performs the following steps:
     - `-it`: Runs in interactive mode with a TTY.
     - `--read-only`: Mounts the container's root filesystem as read-only.
     - `--tmpfs /tmp:exec`: Provides a writable, in-memory `/tmp` directory with execution permissions.
-    - `--tmpfs /root`: Provides a writable, in-memory `/root` directory for configuration files.
+    - `--tmpfs /root`: Provides a writable, in-memory `/root` directory for configuration files (including Claude Code auth at `~/.claude`). This state is lost when the container exits — you must re-authenticate each session.
     - `-v "$PWD":/workspace`: Mounts your current host directory to `/workspace` inside the container.
     - `-w /workspace`: Sets the initial working directory to `/workspace`.
 
@@ -50,7 +50,7 @@ The script performs the following steps:
 
 - **Isolation**: Claude Code only sees the files in the directory where you launched `sandbox.sh`.
 - **Read-Only Root**: Prevents any modifications to the underlying container system files.
-- **Ephemeral State**: Changes made outside of `/workspace` (in `/tmp` or `/root`) are stored in RAM and discarded immediately when the container exits.
+- **Ephemeral State**: Changes made outside of `/workspace` (in `/tmp` or `/root`) are stored in RAM and discarded immediately when the container exits. This includes Claude Code authentication — you must re-authenticate each time you start a new container.
 
 ## Running Claude
 
