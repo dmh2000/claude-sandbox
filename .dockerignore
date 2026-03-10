@@ -1,0 +1,7 @@
+.git
+.dockerignore
+Dockerfile
+run.sh
+docs/
+prompts/
+CLAUDE.md
