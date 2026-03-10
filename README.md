@@ -59,3 +59,7 @@ Once the script starts, you will be dropped into a Bash shell inside the contain
 ```bash
 claude
 ```
+
+
+## Note
+This was built using Claude Code and the [Obra Superpowers](https://github.com/obra/superpowers) plugin. The 'docs' directory contains the artifacts created by that plugin/skill. 
